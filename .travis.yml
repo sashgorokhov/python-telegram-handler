@@ -1,0 +1,25 @@
+language: python
+sudo: false
+cache: pip
+
+python:
+  - "2.7"
+  - "3.0"
+  - "3.3"
+  - "3.4"
+
+before_install:
+  - pip install codecov
+
+install:
+  - pip install tox-travis
+
+script:
+  - tox
+
+after_success:
+  - codecov
+
+notifications:
+  email:
+    - sashgorokhov@gmail.com
