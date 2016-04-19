@@ -1,8 +1,11 @@
 import logging
+import os
 import unittest
 from collections import namedtuple
+from logging.config import dictConfig
 
 import mock
+import sys
 from six import StringIO
 
 from telegram_handler import handlers, main
@@ -64,6 +67,32 @@ class TestTelegramHandler(unittest.TestCase):
             'disable_notification': self.handler.disable_notification,
         }
         self.assertEqual(data, expected_data)
+
+    @mock.patch('sys.path', new=sys.path + [os.path.dirname(os.path.dirname(__file__))])
+    @mock.patch('telegram_handler.TelegramHandler.emit')
+    def test_hanler_configuring(self, magic_mock):
+        logger_name = self.__class__.__name__
+        config = {
+            'version': 1,
+            'handlers': {
+                'telegram': {
+                    'class': 'telegram_handler.TelegramHandler',
+                    'token': self.token,
+                    'chat_id': self.chat_id
+                }
+            },
+            'loggers': {
+                logger_name: {
+                    'handlers': ['telegram'],
+                    'level': 'DEBUG'
+                }
+            }
+        }
+        dictConfig(config)
+        logger = logging.getLogger(logger_name)
+        logger.info('Hello')
+
+        magic_mock.assert_called_once()
 
 
 class TestCLI(unittest.TestCase):
