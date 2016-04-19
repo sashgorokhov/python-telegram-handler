@@ -59,3 +59,33 @@ For example, using dictConfig:
             }
         }
 
+Formatting
+==========
+
+Currently the format of sent messages is very simple: ``%(asctime)s %(name)s %(levelname)s %(message)s``
+Exception traceback will be formatted as pre-formatted fixed-width code block.
+
+If you want to tweak it, configure a ``telegram_handler.MarkdownFormatter`` with your desired format string.
+Using a dictConfig:
+
+.. code-block:: python
+        
+        ...
+        {
+            'formatters': {
+                'telegram': {
+                    'class': 'telegram_handler.MarkdownFormatter',
+                    'fmt': '%(levelname)s %(message)s'
+                }
+            }
+            'handlers': {
+                'telegram': {
+                    'class': 'telegram_handler.TelegramHandler',
+                    'formatter': 'telegram',
+                    'token': 'your token',
+                    'chat_id': 'chat id'
+                }
+            }
+        }
+        ...
+
