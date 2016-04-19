@@ -38,4 +38,24 @@ Then run a command:
 If all went ok, a ``chat_id`` will be printed to stdout.
 
 Using ``token`` and ``chat_id``, configure log handler in your desired way.
+For example, using dictConfig:
+
+.. code-block:: python
+
+        {
+            'version': 1,
+            'handlers': {
+                'telegram': {
+                    'class': 'telegram_handler.TelegramHandler',
+                    'token': 'your token',
+                    'chat_id': 'chat id'
+                }
+            },
+            'loggers': {
+                'my_logger': {
+                    'handlers': ['telegram'],
+                    'level': 'DEBUG'
+                }
+            }
+        }
 
