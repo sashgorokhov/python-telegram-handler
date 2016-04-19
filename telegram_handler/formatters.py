@@ -11,8 +11,8 @@ class TelegramFormatter(logging.Formatter):
     fmt = "%(asctime)s %(name)s %(levelname)s %(message)s"
     parse_mode = None
 
-    def __init__(self, fmt=None):
-        super(TelegramFormatter, self).__init__(fmt=fmt or self.fmt)
+    def __init__(self, fmt=None, *args, **kwargs):
+        super(TelegramFormatter, self).__init__(fmt or self.fmt, *args, **kwargs)
 
 
 class StyledFormatter(TelegramFormatter):
@@ -52,7 +52,6 @@ class StyledFormatter(TelegramFormatter):
 class MarkdownFormatter(StyledFormatter):
     """Markdown formatter for telegram."""
 
-    fmt = "%(asctime)s %(name)s %(levelname)s %(message)s"
     parse_mode = 'Markdown'
 
     _bold = '*'

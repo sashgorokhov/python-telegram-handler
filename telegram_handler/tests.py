@@ -74,9 +74,16 @@ class TestTelegramHandler(unittest.TestCase):
         logger_name = self.__class__.__name__
         config = {
             'version': 1,
+            'formatters': {
+                'telegram': {
+                    'class': 'telegram_handler.MarkdownFormatter',
+                    'format': '%(levelname)s %(message)s'
+                }
+            },
             'handlers': {
                 'telegram': {
                     'class': 'telegram_handler.TelegramHandler',
+                    'formatter': 'telegram',
                     'token': self.token,
                     'chat_id': self.chat_id
                 }
