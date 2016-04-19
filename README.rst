@@ -23,4 +23,19 @@ Via pip:
 
 Usage
 =====
-# TODO
+
+Register a new telegram bot and obtain a ``authentication token``. (Instructions here https://core.telegram.org/bots#3-how-do-i-create-a-bot)
+
+After that, you must obtain a ``chat_id``. You can do that using included simple script. Start a new conversation with newly created bot, write something to it (it is important to initiate conversation first).
+
+
+Then run a command:
+
+.. code-block:: shell
+
+    telegram_handler <your token here>
+    
+If all went ok, a ``chat_id`` will be printed to stdout.
+
+Using ``token`` and ``chat_id``, configure log handler in your desired way.
+
