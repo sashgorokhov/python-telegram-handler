@@ -43,7 +43,7 @@ class TestTelegramHandler(unittest.TestCase):
         data.update(additional_kwargs)
         self.handler.sendMessage(text, **additional_kwargs)
 
-        magic_mock.assert_called_once_with(self.handler.url, data=data)
+        magic_mock.assert_called_once_with(self.handler.url, data=data, timeout=self.handler.timeout)
 
     @mock.patch('requests.post')
     def test_emit(self, magic_mock):
