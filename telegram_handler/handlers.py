@@ -7,7 +7,7 @@ try:
 except ImportError:
     import urlparse as parse
 
-from telegram_handler.formatters import MarkdownFormatter
+from telegram_handler.formatters import HtmlFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class TelegramHandler(logging.Handler):
 
         super(TelegramHandler, self).__init__(level=level)
 
-        self.formatter = MarkdownFormatter()
+        self.formatter = HtmlFormatter()
 
     @classmethod
     def formatUrl(cls, token, method):
@@ -40,7 +40,7 @@ class TelegramHandler(logging.Handler):
         """
         logger.debug(str(data))
         try:
-            response = requests.post(self.url, data=data)
+            response = requests.post(self.url, data=data, timeout=self.timeout)
         except:
             logger.exception('Error while making POST %s', url)
             return None

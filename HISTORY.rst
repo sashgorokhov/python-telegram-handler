@@ -3,6 +3,11 @@
 History
 -------
 
+1.1.1 (2016-04-20)
+++++++++++++++++++
+
+* Use HTML Formatter as default formatter for telegram handler
+
 1.1.0 (2016-04-20)
 ++++++++++++++++++
 
