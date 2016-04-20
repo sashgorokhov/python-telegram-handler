@@ -1,14 +1,14 @@
 import logging
 import os
+import sys
 import unittest
 from collections import namedtuple
 from logging.config import dictConfig
 
 import mock
-import sys
 from six import StringIO
 
-from telegram_handler import handlers, main
+from telegram_handler import handlers, main, utils, formatters
 
 
 class TestTelegramHandler(unittest.TestCase):
@@ -25,8 +25,8 @@ class TestTelegramHandler(unittest.TestCase):
     def emit(self, *args, **kwargs):
         return self.handler.emit(self.log_record(*args, **kwargs))
 
-    def format(self, *args, **kwargs):
-        return self.handler.format(self.log_record(*args, **kwargs))
+    # def format(self, *args, **kwargs):
+    #     return self.handler.format(self.log_record(*args, **kwargs))
 
     def test_handler_url(self):
         self.assertEqual(self.handler.url, self.handler.formatUrl(self.token, 'sendMessage'))
@@ -47,8 +47,8 @@ class TestTelegramHandler(unittest.TestCase):
 
     @mock.patch('requests.post')
     def test_emit(self, magic_mock):
-        response = namedtuple('Response', ['json'])
-        magic_mock.return_value = response(json=lambda *args, **kwargs: {'ok': True})
+        response = namedtuple('Response', ['json', 'text'])
+        magic_mock.return_value = response(json=lambda *args, **kwargs: {'ok': True}, text='Some text')
 
         record = self.log_record('Test Text')
         self.handler.emit(record)
@@ -101,6 +101,27 @@ class TestTelegramHandler(unittest.TestCase):
 
         magic_mock.assert_called_once()
 
+    @mock.patch('requests.post')
+    @mock.patch('telegram_handler.handlers.logger.exception')
+    def test_requests_error_hanling(self, logger_mock, requests_mock):
+        requests_mock.side_effect = ValueError('Test error')
+
+        self.emit('Test message')
+
+        requests_mock.assert_called_once()
+        logger_mock.assert_called_once()
+
+    @mock.patch('requests.post')
+    @mock.patch('telegram_handler.handlers.logger.warning')
+    def test_api_response_not_ok(self, logger_mock, magic_mock):
+        response = namedtuple('Response', ['json', 'text'])
+        magic_mock.return_value = response(json=lambda *args, **kwargs: {'ok': False}, text='Some text')
+
+        self.emit('Some message')
+
+        magic_mock.assert_called_once()
+        logger_mock.assert_called_once()
+
 
 class TestCLI(unittest.TestCase):
     token = 'TestToken'
@@ -134,3 +155,76 @@ class TestCLI(unittest.TestCase):
         with mock.patch('sys.stdout', new=io):
             main()
         self.assertIn(self.chat_id, io.getvalue())
+
+
+class TestUtils(unittest.TestCase):
+    def test_surround(self):
+        ch = 'hello'
+        text = 'world'
+
+        result = utils.surround(text, ch)
+
+        self.assertTrue(result.startswith(ch))
+        self.assertTrue(result.endswith(ch))
+
+    def test_tag_escape(self):
+        tag = 'p'
+        escaped_text = '<b>'
+        text = 'Hello, {} world!'.format(escaped_text)
+
+        result = utils.tag(text, tag, escape=True)
+
+        self.assertNotIn(result, escaped_text)
+
+
+class TestFormatters(unittest.TestCase):
+    def setUp(self):
+        self.styled_formatter = formatters.StyledFormatter()
+        self.html_formatter = formatters.HtmlFormatter()
+        self.markdown_formatter = formatters.MarkdownFormatter()
+
+    def test_styled_formatter_unconfigured(self):
+        with self.assertRaises(NotImplementedError) as error:
+            self.styled_formatter.escape('Some Text')
+
+        self.assertIn('not set', str(error.exception))
+
+        with self.assertRaises(NotImplementedError) as error:
+            self.styled_formatter.style_text('Some Text', list(self.styled_formatter.styles.keys())[0])
+
+        self.assertIn('not set', str(error.exception))
+
+        with self.assertRaises(NotImplementedError) as error:
+            self.styled_formatter.bold('text')
+
+        self.assertIn('not set', str(error.exception))
+
+    def test_invalid_style_key(self):
+        formatter = type('TestFormatter', (formatters.StyledFormatter,),
+                         {'_style_func': lambda *args, **kwargs: (args, kwargs)})()
+
+        with self.assertRaises(NotImplementedError) as error:
+            formatter.style_text('Some text', 'invalid key')
+
+        self.assertIn('not implemented', str(error.exception))
+
+    @mock.patch('telegram_handler.formatters.HtmlFormatter._escape_func')
+    def test_escape(self, magic_mock):
+        text = 'Some text'
+        self.html_formatter.escape(text)
+        magic_mock.assert_called_once_with(text)
+
+    @mock.patch('telegram_handler.formatters.HtmlFormatter._style_func')
+    @mock.patch('telegram_handler.formatters.HtmlFormatter.escape')
+    def test_style_text(self, escape_mock, style_mock):
+        text = 'Some text'
+        style_key = list(self.html_formatter.styles.keys())[0]
+
+        self.html_formatter.style_text(text, style_key)
+
+        escape_mock.assert_called_once_with(text)
+        style_mock.assert_called_once()
+
+        self.html_formatter.style_text(text, style_key, escape=False)
+
+        escape_mock.assert_called_once()

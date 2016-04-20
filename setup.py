@@ -7,7 +7,7 @@ with open('README.rst') as readme:
 setup(
     requires=['requests'],
     name='python-telegram-handler',
-    version='1.0',
+    version='1.1',
     packages=['telegram_handler'],
     url='https://github.com/sashgorokhov/python-telegram-handler',
     download_url='https://github.com/sashgorokhov/python-telegram-handler/archive/master.zip',
