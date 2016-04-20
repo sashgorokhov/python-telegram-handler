@@ -65,7 +65,7 @@ Formatting
 Currently the format of sent messages is very simple: ``%(asctime)s %(name)s %(levelname)s %(message)s``
 Exception traceback will be formatted as pre-formatted fixed-width code block. (https://core.telegram.org/bots/api#markdown-style)
 
-If you want to tweak it, configure a ``telegram_handler.MarkdownFormatter`` with your desired format string.
+If you want to tweak it, configure a ``telegram_handler.HtmlFormatter`` with your desired format string.
 Using a dictConfig:
 
 .. code-block:: python
@@ -74,7 +74,7 @@ Using a dictConfig:
         {
             'formatters': {
                 'telegram': {
-                    'class': 'telegram_handler.MarkdownFormatter',
+                    'class': 'telegram_handler.HtmlFormatter',
                     'fmt': '%(levelname)s %(message)s'
                 }
             }
