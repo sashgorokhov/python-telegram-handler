@@ -3,6 +3,11 @@
 History
 -------
 
+1.1.2 (2016-05-13)
+++++++++++++++++++
+
+* Fixed setup.py requires option (changed to install_requires)
+
 1.1.1 (2016-04-20)
 ++++++++++++++++++
 

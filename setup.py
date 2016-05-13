@@ -5,9 +5,9 @@ with open('README.rst') as readme:
         long_description = readme.read() + '\n\n' + history.read()
 
 setup(
-    requires=['requests'],
+    install_requires=['requests'],
     name='python-telegram-handler',
-    version='1.1.1',
+    version='1.1.2',
     packages=['telegram_handler'],
     url='https://github.com/sashgorokhov/python-telegram-handler',
     download_url='https://github.com/sashgorokhov/python-telegram-handler/archive/master.zip',

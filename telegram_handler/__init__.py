@@ -5,7 +5,7 @@ from .handlers import *
 def main():
     import argparse, requests
 
-    parser = argparse.ArgumentParser('Telegram Loggin Handler', description='Helps to retrieve chat_id')
+    parser = argparse.ArgumentParser('Telegram Logging Handler', description='Helps to retrieve chat_id')
     parser.add_argument('token')
 
     args = parser.parse_args()
