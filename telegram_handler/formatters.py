@@ -32,7 +32,7 @@ class StyledFormatter(TelegramFormatter):
 
     def __init__(self, *args, **kwargs):
         if 'escape_message' in kwargs:
-            self.escape_exception = kwargs.pop('escape_message')
+            self.escape_message = kwargs.pop('escape_message')
         if 'escape_exception' in kwargs:
             self.escape_exception = kwargs.pop('escape_exception')
         super(StyledFormatter, self).__init__(*args, **kwargs)
