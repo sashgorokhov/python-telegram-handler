@@ -3,6 +3,11 @@
 History
 -------
 
+1.1.3 (2016-09-22)
+++++++++++++++++++
+
+* Setting escape_message field of StyledFormatter missed (@ihoru)
+
 1.1.2 (2016-05-13)
 ++++++++++++++++++
 
