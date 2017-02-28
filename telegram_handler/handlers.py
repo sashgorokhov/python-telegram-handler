@@ -1,63 +1,64 @@
 import logging
-
 import requests
-
-try:
-    from urllib import parse
-except ImportError:
-    import urlparse as parse
-
 from telegram_handler.formatters import HtmlFormatter
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 __all__ = ['TelegramHandler']
 
 
 class TelegramHandler(logging.Handler):
-    base_url = 'https://api.telegram.org/bot{token}/'
-
-    def __init__(self, token, chat_id, disable_notification=False, disable_web_page_preview=False, timeout=2,
-                 level=logging.NOTSET):
+    def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
+                 disable_web_page_preview=False):
         self.token = token
-        self.chat_id = chat_id
         self.disable_web_page_preview = disable_web_page_preview
         self.disable_notification = disable_notification
         self.timeout = timeout
-        self.url = self.formatUrl(self.token, 'sendMessage')
-
+        self.chat_id = chat_id or self.get_chat_id()
+        if not self.chat_id:
+            level = logging.NOTSET
+            logger.error('Did not get chat id. Setting handler logging level to NOTSET.')
         super(TelegramHandler, self).__init__(level=level)
-
-        self.formatter = HtmlFormatter()
+        self.setFormatter(HtmlFormatter())
 
     @classmethod
-    def formatUrl(cls, token, method):
-        return parse.urljoin(cls.base_url.format(token=token), method)
+    def format_url(cls, token, method):
+        return 'https://api.telegram.org/bot%s/%s' % (token, method)
 
-    def make_request(self, url, data):
-        """
-        :rtype: requests.Response|None
-        """
-        logger.debug(str(data))
+    def get_chat_id(self):
+        response = self.request('getUpdates')
+        if not response.get('ok', False):
+            logger.error('Telegram response is not ok: %s', str(response))
+            return
         try:
-            response = requests.post(self.url, data=data, timeout=self.timeout)
+            return response['result'][-1]['message']['chat']['id']
         except:
-            logger.exception('Error while making POST %s', url)
-            return None
+            logger.exception('Something went terribly wrong while obtaining chat id')
+            logger.debug(response)
 
-        logger.debug(response.text)
+    def request(self, method, **kwargs):
+        url = self.format_url(self.token, method)
+
+        kwargs.setdefault('timeout', self.timeout)
+
+        response = None
+        try:
+            response = requests.post(url, **kwargs)
+            response.raise_for_status()
+            return response.json()
+        except:
+            logger.exception('Error while making POST to %s', url)
+            logger.debug(str(kwargs))
+            if response is not None:
+                logger.debug(response.content)
+
         return response
 
-    def sendMessage(self, text, **kwargs):
-        """
-        :param str text:
-        :param dict kwargs:
-        :rtype: requests.Response|None
-        """
-
+    def send_message(self, text, **kwargs):
         data = {'text': text}
         data.update(kwargs)
-        return self.make_request(self.url, data)
+        return self.request('sendMessage', json=data)
 
     def emit(self, record):
         text = self.format(record)
@@ -66,10 +67,13 @@ class TelegramHandler(logging.Handler):
             'disable_web_page_preview': self.disable_web_page_preview,
             'disable_notification': self.disable_notification,
         }
+
         if getattr(self.formatter, 'parse_mode', None):
             data['parse_mode'] = self.formatter.parse_mode
-        response = self.sendMessage(text, **data)
-        if not response: return
-        json = response.json()
-        if not json['ok']:
-            logger.warning('Telegram responded with ok=false status! {}'.format(response.text))
+
+        response = self.send_message(text, **data)
+        if not response:
+            return
+
+        if not response.get('ok', False):
+            logger.warning('Telegram responded with ok=false status! {}'.format(response))

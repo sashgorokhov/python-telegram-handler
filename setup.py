@@ -18,9 +18,4 @@ setup(
     author='sashgorokhov',
     author_email='sashgorokhov@gmail.com',
     description='A python logging handler that sends logs via Telegram Bot Api.',
-    entry_points={
-        'console_scripts': [
-            'telegram_handler = telegram_handler:main'
-        ]
-    }
 )

@@ -1,2 +1,5 @@
-.tox
-.idea
+.tox/
+.cache/
+.idea/
+.coverage
+htmlcov/
