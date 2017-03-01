@@ -34,3 +34,19 @@ def test_html_formatter_format():
 
     assert '<foo>' not in s
     assert '<module>' not in s
+
+
+def test_html_formatter_emoji():
+    formatter = formatters.HtmlFormatter(use_emoji=True)
+
+    emoji_level_map = {
+        formatters.EMOJI.WHITE_CIRCLE: [logging.DEBUG],
+        formatters.EMOJI.BLUE_CIRCLE: [logging.INFO],
+        formatters.EMOJI.RED_CIRCLE: [logging.WARNING, logging.ERROR]
+    }
+
+    for emoji, levels in emoji_level_map.items():
+        for level in levels:
+            logrecord = logging.makeLogRecord({'levelno': level, 'levelname': logging.getLevelName(level)})
+            s = formatter.format(logrecord)
+            assert s.find(emoji) > 0, 'Emoji not found in %s' % level

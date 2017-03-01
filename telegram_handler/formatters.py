@@ -25,10 +25,20 @@ class MarkdownFormatter(TelegramFormatter):
         return '```%s```' % string
 
 
+class EMOJI:
+    WHITE_CIRCLE = '\xE2\x9A\xAA'
+    BLUE_CIRCLE = '\xF0\x9F\x94\xB5'
+    RED_CIRCLE = '\xF0\x9F\x94\xB4'
+
+
 class HtmlFormatter(TelegramFormatter):
     """HTML formatter for telegram."""
     fmt = '<code>%(asctime)s</code> <b>%(levelname)s</b>\nFrom %(name)s:%(funcName)s\n%(message)s'
     parse_mode = 'HTML'
+
+    def __init__(self, *args, **kwargs):
+        self.use_emoji = kwargs.pop('use_emoji', False)
+        super(HtmlFormatter, self).__init__(*args, **kwargs)
 
     def format(self, record):
         """
@@ -40,6 +50,16 @@ class HtmlFormatter(TelegramFormatter):
             record.name = escape_html(str(record.name))
         if record.msg:
             record.msg = escape_html(record.getMessage())
+        if self.use_emoji:
+            print(record.name, record.levelno, record.levelname)
+            if record.levelno == logging.DEBUG:
+                print(record.levelno, record.levelname)
+                record.levelname += ' ' + EMOJI.WHITE_CIRCLE
+            elif record.levelno == logging.INFO:
+                print(record.levelno, record.levelname)
+                record.levelname += ' ' + EMOJI.BLUE_CIRCLE
+            else:
+                record.levelname += ' ' + EMOJI.RED_CIRCLE
         return super(HtmlFormatter, self).format(record)
 
     def formatException(self, *args, **kwargs):
