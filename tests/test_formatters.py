@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from telegram_handler import formatters
@@ -23,3 +24,13 @@ def test_html_formatter_exception():
         string = formatter.formatException(sys.exc_info())
         assert string.startswith('<pre>')
         assert string.endswith('</pre>')
+
+
+def test_html_formatter_format():
+    formatter = formatters.HtmlFormatter()
+
+    logrecord = logging.makeLogRecord(dict(name='<foo>', func='<module>', msg='Whatsup?', funcName='test'))
+    s = formatter.format(logrecord)
+
+    assert '<foo>' not in s
+    assert '<module>' not in s

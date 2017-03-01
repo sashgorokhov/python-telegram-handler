@@ -1,5 +1,6 @@
 import logging
 import requests
+
 from telegram_handler.formatters import HtmlFormatter
 
 logger = logging.getLogger(__name__)
@@ -9,6 +10,8 @@ __all__ = ['TelegramHandler']
 
 
 class TelegramHandler(logging.Handler):
+    last_response = None
+
     def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
                  disable_web_page_preview=False):
         self.token = token
@@ -19,6 +22,7 @@ class TelegramHandler(logging.Handler):
         if not self.chat_id:
             level = logging.NOTSET
             logger.error('Did not get chat id. Setting handler logging level to NOTSET.')
+        logger.info('Chat id: %s', self.chat_id)
         super(TelegramHandler, self).__init__(level=level)
         self.setFormatter(HtmlFormatter())
 
@@ -45,6 +49,7 @@ class TelegramHandler(logging.Handler):
         response = None
         try:
             response = requests.post(url, **kwargs)
+            self.last_response = response
             response.raise_for_status()
             return response.json()
         except:
