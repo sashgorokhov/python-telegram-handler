@@ -12,6 +12,10 @@ python-telegram-handler
 .. image:: https://codecov.io/github/sashgorokhov/python-telegram-handler/coverage.svg?branch=master 
     :target: https://codecov.io/github/sashgorokhov/python-telegram-handler?branch=master 
 
+.. image:: https://codeclimate.com/github/sashgorokhov/python-telegram-handler/badges/gpa.svg
+   :target: https://codeclimate.com/github/sashgorokhov/python-telegram-handler
+   :alt: Code Climate
+
 .. image:: https://img.shields.io/github/license/sashgorokhov/python-telegram-handler.svg 
     :target: https://raw.githubusercontent.com/sashgorokhov/python-telegram-handler/master/LICENSE 
 
