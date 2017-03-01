@@ -1,9 +1,8 @@
 import json
 import logging
 
+import mock
 import pytest
-from unittest import mock
-
 import requests
 
 import telegram_handler.handlers
