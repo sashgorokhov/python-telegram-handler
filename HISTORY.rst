@@ -3,6 +3,16 @@
 History
 -------
 
+2.0 (2017-03-01)
+++++++++++++++++
+
+* Refactored HtmlFormatter and MarkdownFormatter
+* Refactored TelegramHandler
+* No more need to call a command to obtain a chat_id - it will be obtained automatically on handler init
+* Rewritten tests
+* Escape LogRecord things in HtmlFormatter
+* Added optional emoji symbols in HtmlFormatter.
+
 1.1.3 (2016-09-22)
 ++++++++++++++++++
 
