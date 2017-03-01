@@ -2,3 +2,4 @@ requests
 mock
 pytest
 pytest-cov
+tox

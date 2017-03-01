@@ -7,7 +7,7 @@ with open('README.rst') as readme:
 setup(
     install_requires=['requests'],
     name='python-telegram-handler',
-    version='1.1.3',
+    version='2.0',
     packages=['telegram_handler'],
     url='https://github.com/sashgorokhov/python-telegram-handler',
     download_url='https://github.com/sashgorokhov/python-telegram-handler/archive/master.zip',
@@ -18,9 +18,4 @@ setup(
     author='sashgorokhov',
     author_email='sashgorokhov@gmail.com',
     description='A python logging handler that sends logs via Telegram Bot Api.',
-    entry_points={
-        'console_scripts': [
-            'telegram_handler = telegram_handler:main'
-        ]
-    }
 )

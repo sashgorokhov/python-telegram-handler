@@ -1,9 +1,9 @@
-from .formatters import *
-from .handlers import *
+from telegram_handler.formatters import *
+from telegram_handler.handlers import *
 
 
-def main():
-    import argparse, requests
+def main():  # pragma: no cover
+    import argparse
 
     parser = argparse.ArgumentParser('Telegram Logging Handler', description='Helps to retrieve chat_id')
     parser.add_argument('token')
@@ -11,20 +11,14 @@ def main():
     args = parser.parse_args()
     token = args.token
 
-    url = TelegramHandler.formatUrl(token, 'getUpdates')
-
-    json = requests.get(url).json()
-
-    if not json['ok']:
-        raise ValueError('Something went wrong! getUdates response is not ok! {}'.format(json))
-
-    try:
-        chat_id = json['result'][0]['message']['chat']['id']
-    except:
-        raise ValueError('Something went wrong! Got such a json: {}'.format(json))
-
+    handler = TelegramHandler(token, 'foo')
+    chat_id = handler.get_chat_id()
+    if not chat_id:
+        print('Did not get chat id')
+        print(handler.last_response.status_code, handler.last_response.text)
+        exit(-1)
     print(chat_id)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()
