@@ -4,13 +4,15 @@ with open('README.rst') as readme:
     with open('HISTORY.rst') as history:
         long_description = readme.read() + '\n\n' + history.read()
 
+VERSION = '2.0.1'
+
 setup(
     install_requires=['requests'],
     name='python-telegram-handler',
-    version='2.0',
+    version=VERSION,
     packages=['telegram_handler'],
     url='https://github.com/sashgorokhov/python-telegram-handler',
-    download_url='https://github.com/sashgorokhov/python-telegram-handler/archive/master.zip',
+    download_url='https://github.com/sashgorokhov/python-telegram-handler/archive/v%s.zip' % VERSION,
     keywords=['telegram', 'logging', 'handler', 'bot'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
