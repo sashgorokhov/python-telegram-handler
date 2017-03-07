@@ -1,13 +1,17 @@
 python-telegram-handler
 ***********************
 
+.. image:: https://img.shields.io/pypi/status/python-telegram-handler.svg
+    :target: https://github.com/sashgorokhov/python-telegram-handler
+
+.. image:: https://img.shields.io/pypi/pyversions/python-telegram-handler.svg
+    :target: https://pypi.python.org/pypi/python-telegram-handler
+
 .. image:: https://badge.fury.io/py/python-telegram-handler.svg 
     :target: https://badge.fury.io/py/python-telegram-handler 
 
-
 .. image:: https://travis-ci.org/sashgorokhov/python-telegram-handler.svg?branch=master 
     :target: https://travis-ci.org/sashgorokhov/python-telegram-handler 
-
 
 .. image:: https://codecov.io/github/sashgorokhov/python-telegram-handler/coverage.svg?branch=master 
     :target: https://codecov.io/github/sashgorokhov/python-telegram-handler?branch=master 
