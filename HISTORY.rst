@@ -3,6 +3,12 @@
 History
 -------
 
+2.0.2 (2017-11-20)
+++++++++++++++++++
+
+* fix TypeError in HtmlFormatter.format (by tompipen)
+
+
 2.0 (2017-03-01)
 ++++++++++++++++
 
