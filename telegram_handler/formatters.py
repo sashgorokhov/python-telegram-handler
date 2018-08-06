@@ -53,12 +53,9 @@ class HtmlFormatter(TelegramFormatter):
         if record.msg:
             record.msg = escape_html(record.getMessage())
         if self.use_emoji:
-            print(record.name, record.levelno, record.levelname)
             if record.levelno == logging.DEBUG:
-                print(record.levelno, record.levelname)
                 record.levelname += ' ' + EMOJI.WHITE_CIRCLE
             elif record.levelno == logging.INFO:
-                print(record.levelno, record.levelname)
                 record.levelname += ' ' + EMOJI.BLUE_CIRCLE
             else:
                 record.levelname += ' ' + EMOJI.RED_CIRCLE
