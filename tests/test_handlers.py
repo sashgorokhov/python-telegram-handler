@@ -61,6 +61,17 @@ def test_emit(handler):
     assert 'hello' in patch.call_args[1]['json']['text']
     assert patch.call_args[1]['json']['parse_mode'] == 'HTML'
 
+def test_emit_big_message(handler):
+    message = '*' * telegram_handler.handlers.MAX_MESSAGE_LEN
+
+    record = logging.makeLogRecord({'msg': message})
+
+    with mock.patch('requests.post') as patch:
+        handler.emit(record)
+
+    assert patch.called
+    assert patch.call_count == 1
+
 
 def test_emit_http_exception(handler):
     record = logging.makeLogRecord({'msg': 'hello'})
@@ -109,6 +120,15 @@ def test_get_chat_id_telegram_error(handler):
         assert handler.get_chat_id() is None
 
     assert telegram_handler.handlers.logger.handlers[0].messages['error']
+
+
+def test_get_chat_id_no_response(handler):
+    with mock.patch.object(handler, 'request') as patch:
+        patch.return_value = None
+        value = handler.get_chat_id()
+
+    assert value is None
+    patch.assert_called_once()
 
 
 def test_get_chat_id_response_invalid_format(handler):

@@ -1,12 +1,18 @@
 import logging
+from io import BytesIO
+
 import requests
 
 from telegram_handler.formatters import HtmlFormatter
 
 logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
+logger.setLevel(logging.NOTSET)
+logger.propagate = False
 
 __all__ = ['TelegramHandler']
+
+
+MAX_MESSAGE_LEN = 4096
 
 
 class TelegramHandler(logging.Handler):
@@ -23,16 +29,18 @@ class TelegramHandler(logging.Handler):
             level = logging.NOTSET
             logger.error('Did not get chat id. Setting handler logging level to NOTSET.')
         logger.info('Chat id: %s', self.chat_id)
+
         super(TelegramHandler, self).__init__(level=level)
+
         self.setFormatter(HtmlFormatter())
 
     @classmethod
     def format_url(cls, token, method):
-        return 'https://api.telegram.org/bot%s/%s' % (token, method)
+        return 'http://botapi.antrekod.ru/bot%s/%s' % (token, method)
 
     def get_chat_id(self):
         response = self.request('getUpdates')
-        if not response.get('ok', False):
+        if not response or not response.get('ok', False):
             logger.error('Telegram response is not ok: %s', str(response))
             return
         try:
@@ -65,8 +73,14 @@ class TelegramHandler(logging.Handler):
         data.update(kwargs)
         return self.request('sendMessage', json=data)
 
+    def send_document(self, text, document, **kwargs):
+        data = {'caption': text}
+        data.update(kwargs)
+        return self.request('sendDocument', data=data, files={'document': ('traceback.txt', document, 'text/plain')})
+
     def emit(self, record):
         text = self.format(record)
+
         data = {
             'chat_id': self.chat_id,
             'disable_web_page_preview': self.disable_web_page_preview,
@@ -76,9 +90,10 @@ class TelegramHandler(logging.Handler):
         if getattr(self.formatter, 'parse_mode', None):
             data['parse_mode'] = self.formatter.parse_mode
 
-        response = self.send_message(text, **data)
-        if not response:
-            return
+        if len(text) < MAX_MESSAGE_LEN:
+            response = self.send_message(text, **data)
+        else:
+            response = self.send_document(text[:1000], document=BytesIO(text.encode()), **data)
 
-        if not response.get('ok', False):
+        if response and not response.get('ok', False):
             logger.warning('Telegram responded with ok=false status! {}'.format(response))

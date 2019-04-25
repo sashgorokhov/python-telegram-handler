@@ -3,6 +3,18 @@
 History
 -------
 
+2.1.0 (2019-04-25)
+++++++++++++++++++
+
+* Send message as file if it is too large
+* Fixes in MarkdownFormatter
+* Fixes in HTMLFormatter
+* Chat id retrieval fixes
+* Drop py33 support from tests
+* Update setup.py classifiers
+* Removed print()-calls in HtmlFormatter (#12) (by Lukas Garberg)
+
+
 2.0.2 (2017-11-20)
 ++++++++++++++++++
 
