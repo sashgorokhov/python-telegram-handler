@@ -4,7 +4,7 @@ with open('README.rst') as readme:
     with open('HISTORY.rst') as history:
         long_description = readme.read() + '\n\n' + history.read()
 
-VERSION = '2.1.0'
+VERSION = '2.1.1'
 
 setup(
     install_requires=['requests'],
