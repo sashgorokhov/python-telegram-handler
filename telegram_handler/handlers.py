@@ -16,6 +16,7 @@ MAX_MESSAGE_LEN = 4096
 
 
 class TelegramHandler(logging.Handler):
+    API_ENDPOINT = 'https://api.telegram.org'
     last_response = None
 
     def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
@@ -36,7 +37,7 @@ class TelegramHandler(logging.Handler):
 
     @classmethod
     def format_url(cls, token, method):
-        return 'http://botapi.antrekod.ru/bot%s/%s' % (token, method)
+        return '%s/bot%s/%s' % (cls.API_ENDPOINT, token, method)
 
     def get_chat_id(self):
         response = self.request('getUpdates')
