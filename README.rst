@@ -63,7 +63,12 @@ For example, using dictConfig:
                 'telegram': {
                     'class': 'telegram_handler.TelegramHandler',
                     'token': 'your token',
-                    'chat_id': 'chat id'
+                    'chat_id': 'chat id',
+                    # pip install requests[socks]
+                    'proxies': {
+                        'http': 'http proxy url',
+                        'https': 'https proxy url'
+                    }
                 }
             },
             'loggers': {

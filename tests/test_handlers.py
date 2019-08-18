@@ -158,6 +158,20 @@ def test_handler_init_without_chat():
 
         assert handler.level == logging.NOTSET
 
+def test_handler_respects_proxy():
+    proxies = {
+        'http': 'http_proxy_sample',
+        'https': 'https_proxy_sample',
+    }
+
+    handler = telegram_handler.handlers.TelegramHandler('foo', 'bar', level=logging.INFO, proxies=proxies)
+    
+    record = logging.makeLogRecord({'msg': 'hello'})
+
+    with mock.patch('requests.post') as patch:
+        handler.emit(record)
+
+    assert patch.call_args[1]['proxies'] == proxies
 
 def test_custom_formatter(handler):
     handler.setFormatter(logging.Formatter())
