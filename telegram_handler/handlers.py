@@ -20,11 +20,12 @@ class TelegramHandler(logging.Handler):
     last_response = None
 
     def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
-                 disable_web_page_preview=False):
+                 disable_web_page_preview=False, proxies=None):
         self.token = token
         self.disable_web_page_preview = disable_web_page_preview
         self.disable_notification = disable_notification
         self.timeout = timeout
+        self.proxies = proxies
         self.chat_id = chat_id or self.get_chat_id()
         if not self.chat_id:
             level = logging.NOTSET
@@ -54,7 +55,7 @@ class TelegramHandler(logging.Handler):
         url = self.format_url(self.token, method)
 
         kwargs.setdefault('timeout', self.timeout)
-
+        kwargs.setdefault('proxies', self.proxies)
         response = None
         try:
             response = requests.post(url, **kwargs)

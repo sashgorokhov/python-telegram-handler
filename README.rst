@@ -106,3 +106,34 @@ Using a dictConfig:
 
 If you wish, you can enable emoji symbols in HtmlFormatter. Just specify `use_emoji=True` in HtmlFormatter settings.
 This will add to levelname a :white_circle: for DEBUG, :large_blue_circle: for INFO, and :red_circle: for WARNING and ERROR levels. 
+
+Proxy
+===========
+
+In case if you have to use this package inside the country where Telegram servers are blocked by gowrnment you can specify proxy urls in config.
+Using a dictConfig:
+
+.. code-block:: python
+        
+        ...
+        {
+            'handlers': {
+                'telegram': {
+                    'class': 'telegram_handler.TelegramHandler',
+                    'formatter': 'telegram',
+                    'token': 'your token',
+                    'chat_id': 'chat id',
+                    'proxies': {
+                        'http': 'socks5://user:pass@host:port',
+                        'https': 'socks5://user:pass@host:port'
+                    }
+                }
+            }
+        }
+        ...
+
+**Important!** If you plan to use *socks* proxy make sure you have ``requests`` package with ``socks`` support installed:
+
+.. code-block:: shell
+
+    pip install requests[socks]
