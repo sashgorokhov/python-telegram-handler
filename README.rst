@@ -63,12 +63,7 @@ For example, using dictConfig:
                 'telegram': {
                     'class': 'telegram_handler.TelegramHandler',
                     'token': 'your token',
-                    'chat_id': 'chat id',
-                    # pip install requests[socks]
-                    'proxies': {
-                        'http': 'http proxy url',
-                        'https': 'https proxy url'
-                    }
+                    'chat_id': 'chat id'
                 }
             },
             'loggers': {
@@ -111,3 +106,31 @@ Using a dictConfig:
 
 If you wish, you can enable emoji symbols in HtmlFormatter. Just specify `use_emoji=True` in HtmlFormatter settings.
 This will add to levelname a :white_circle: for DEBUG, :large_blue_circle: for INFO, and :red_circle: for WARNING and ERROR levels. 
+
+Proxy
+===========
+
+In case if you have to use this package inside the country where Telegram servers are blocked by gowrnment you can specify proxy urls in config.
+Using a dictConfig:
+
+.. code-block:: python
+        
+        ...
+        {
+            'handlers': {
+                'telegram': {
+                    'class': 'telegram_handler.TelegramHandler',
+                    'formatter': 'telegram',
+                    'token': 'your token',
+                    'chat_id': 'chat id',
+                    'proxies': {
+                        'http': 'http proxy url',
+                        'https': 'https proxy url'
+                    }
+                }
+            }
+        }
+        ...
+
+If you plan to use socks proxy make sure you have ``requests`` package with ``socks`` support installed:
+    pip install requests[socks]
