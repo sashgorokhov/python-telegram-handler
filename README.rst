@@ -124,13 +124,16 @@ Using a dictConfig:
                     'token': 'your token',
                     'chat_id': 'chat id',
                     'proxies': {
-                        'http': 'http proxy url',
-                        'https': 'https proxy url'
+                        'http': 'socks5://user:pass@host:port',
+                        'https': 'socks5://user:pass@host:port'
                     }
                 }
             }
         }
         ...
 
-If you plan to use socks proxy make sure you have ``requests`` package with ``socks`` support installed:
+**Important!** If you plan to use *socks* proxy make sure you have ``requests`` package with ``socks`` support installed:
+
+.. code-block:: shell
+
     pip install requests[socks]
