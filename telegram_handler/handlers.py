@@ -84,7 +84,7 @@ class TelegramHandler(logging.Handler):
     def emit(self, record):
         text = self.format(record)
         if self.username is not None:
-            text = '{}: {}'.format(self.username, text)
+            text = '<b>{}</b>: {}'.format(self.username, text)
 
         data = {
             'chat_id': self.chat_id,
