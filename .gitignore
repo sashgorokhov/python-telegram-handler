@@ -3,3 +3,5 @@
 .idea/
 .coverage
 htmlcov/
+venv/
+/python_telegram_handler.egg-info/

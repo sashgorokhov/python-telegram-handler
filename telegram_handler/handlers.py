@@ -20,10 +20,12 @@ class TelegramHandler(logging.Handler):
     last_response = None
 
     def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
-                 disable_web_page_preview=False, proxies=None):
+                 disable_notification_logging_level=logging.ERROR,
+                 disable_web_page_preview=False, proxies=None, **kwargs):
         self.token = token
         self.disable_web_page_preview = disable_web_page_preview
         self.disable_notification = disable_notification
+        self.disable_notification_logging_level = disable_notification_logging_level
         self.timeout = timeout
         self.proxies = proxies
         self.chat_id = chat_id or self.get_chat_id()
@@ -34,7 +36,7 @@ class TelegramHandler(logging.Handler):
 
         super(TelegramHandler, self).__init__(level=level)
 
-        self.setFormatter(HtmlFormatter())
+        self.setFormatter(HtmlFormatter(use_emoji=kwargs.get('use_emoji', True)))
 
     @classmethod
     def format_url(cls, token, method):
@@ -82,11 +84,11 @@ class TelegramHandler(logging.Handler):
 
     def emit(self, record):
         text = self.format(record)
-
+        disable_notification = (record.levelno < self.disable_notification_logging_level) or self.disable_notification
         data = {
             'chat_id': self.chat_id,
             'disable_web_page_preview': self.disable_web_page_preview,
-            'disable_notification': self.disable_notification,
+            'disable_notification': disable_notification,
         }
 
         if getattr(self.formatter, 'parse_mode', None):
