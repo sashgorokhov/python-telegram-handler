@@ -24,11 +24,12 @@ class TelegramHandler(logging.Handler):
                  disable_web_page_preview=False, proxies=None, **kwargs):
         self.token = token
         self.disable_web_page_preview = disable_web_page_preview
-        self.disable_notification = disable_notification
+        self.disable_notification = kwargs.get('custom_disable_notification', disable_notification)
         self.disable_notification_logging_level = disable_notification_logging_level
         self.timeout = timeout
         self.proxies = proxies
         self.chat_id = chat_id or self.get_chat_id()
+        level = kwargs.get('custom_logging_level', level)
         if not self.chat_id:
             level = logging.NOTSET
             logger.error('Did not get chat id. Setting handler logging level to NOTSET.')
