@@ -85,7 +85,8 @@ class TelegramHandler(logging.Handler):
 
     def emit(self, record):
         text = self.format(record)
-        disable_notification = (record.levelno < self.disable_notification_logging_level) or self.disable_notification
+        disable_notification = (record.levelno is None or record.levelno < self.disable_notification_logging_level) or \
+                               self.disable_notification
         data = {
             'chat_id': self.chat_id,
             'disable_web_page_preview': self.disable_web_page_preview,

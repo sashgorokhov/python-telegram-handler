@@ -42,7 +42,9 @@ def test_html_formatter_emoji():
     emoji_level_map = {
         formatters.EMOJI.WHITE_CIRCLE: [logging.DEBUG],
         formatters.EMOJI.BLUE_CIRCLE: [logging.INFO],
-        formatters.EMOJI.RED_CIRCLE: [logging.WARNING, logging.ERROR]
+        formatters.EMOJI.YELLOW_CIRCLE: [logging.WARNING],
+        formatters.EMOJI.RED_CIRCLE: [logging.ERROR],
+        formatters.EMOJI.BLACK_CIRCLE: [logging.CRITICAL]
     }
 
     for emoji, levels in emoji_level_map.items():
