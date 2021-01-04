@@ -19,7 +19,7 @@ class TelegramHandler(logging.Handler):
     API_ENDPOINT = 'https://api.telegram.org'
     last_response = None
 
-    def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
+    def __init__(self, token, chat_id=None, level=logging.WARNING, timeout=2, disable_notification=False,
                  disable_notification_logging_level=logging.ERROR,
                  disable_web_page_preview=False, proxies=None, **kwargs):
         self.token = token
