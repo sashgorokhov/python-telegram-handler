@@ -3,6 +3,7 @@ from io import BytesIO
 
 import requests
 
+from telegram_handler.TelegramBotQueue import MQBot
 from telegram_handler.formatters import HtmlFormatter
 
 logger = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ class TelegramHandler(logging.Handler):
         super(TelegramHandler, self).__init__(level=level)
 
         self.setFormatter(HtmlFormatter(use_emoji=kwargs.get('use_emoji', True)))
+        self.bot = MQBot(token=self.token)
 
     @classmethod
     def format_url(cls, token, method):
@@ -97,9 +99,9 @@ class TelegramHandler(logging.Handler):
             data['parse_mode'] = self.formatter.parse_mode
 
         if len(text) < MAX_MESSAGE_LEN:
-            response = self.send_message(text, **data)
+            response = self.bot.send_message(text=text, **data)
         else:
-            response = self.send_document(text[:1000], document=BytesIO(text.encode()), **data)
+            response = self.bot.send_document(text=text[:1000], document=BytesIO(text.encode()), **data)
 
-        if response and not response.get('ok', False):
+        if not response:
             logger.warning('Telegram responded with ok=false status! {}'.format(response))
