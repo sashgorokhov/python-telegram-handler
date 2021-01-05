@@ -75,6 +75,7 @@ class TelegramHandler(logging.Handler):
 
         return response
 
+    """
     def send_message(self, text, **kwargs):
         data = {'text': text}
         data.update(kwargs)
@@ -84,6 +85,7 @@ class TelegramHandler(logging.Handler):
         data = {'caption': text}
         data.update(kwargs)
         return self.request('sendDocument', data=data, files={'document': ('traceback.txt', document, 'text/plain')})
+    """
 
     def emit(self, record):
         text = self.format(record)
@@ -98,10 +100,19 @@ class TelegramHandler(logging.Handler):
         if getattr(self.formatter, 'parse_mode', None):
             data['parse_mode'] = self.formatter.parse_mode
 
+        kwargs = dict()
+        if self.timeout is not None:
+            kwargs.setdefault('timeout', self.timeout)
+        if self.proxies is not None:
+            kwargs.setdefault('proxies', self.proxies)
+
         if len(text) < MAX_MESSAGE_LEN:
-            response = self.bot.send_message(text=text, **data)
+            response = self.bot.send_message(text=text, api_kwargs=kwargs, **data)
         else:
-            response = self.bot.send_document(text=text[:1000], document=BytesIO(text.encode()), **data)
+            del data['disable_web_page_preview']
+            response = self.bot.send_document(caption=text[:1000], api_kwargs=kwargs, document=BytesIO(text.encode()),
+                                              filename="traceback.txt",
+                                              **data)
 
         if not response:
             logger.warning('Telegram responded with ok=false status! {}'.format(response))

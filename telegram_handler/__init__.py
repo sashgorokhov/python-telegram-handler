@@ -1,5 +1,4 @@
-from telegram_handler.formatters import *
-from telegram_handler.handlers import *
+from telegram_handler.handlers import TelegramHandler
 
 
 def main():  # pragma: no cover
