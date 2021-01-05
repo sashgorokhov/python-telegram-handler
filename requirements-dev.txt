@@ -3,4 +3,4 @@ mock
 pytest
 pytest-cov
 tox
-python-telegram-bot==5.0
+python-telegram-bot
