@@ -25,7 +25,10 @@ class TelegramHandler(logging.Handler):
                  disable_web_page_preview=False, proxies=None, **kwargs):
         self.token = token
         self.disable_web_page_preview = disable_web_page_preview
-        self.disable_notification = kwargs.get('custom_disable_notification', disable_notification)
+        # self.disable_notification = kwargs.get('custom_disable_notification', disable_notification)
+        self.disable_notification = disable_notification
+        if 'custom_enable_notification' in kwargs:
+            self.disable_notification = not kwargs.get('custom_enable_notification')
         self.disable_notification_logging_level = disable_notification_logging_level
         self.timeout = timeout
         self.proxies = proxies
