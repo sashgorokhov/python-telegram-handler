@@ -3,3 +3,4 @@ mock
 pytest
 pytest-cov
 tox
+python-telegram-bot

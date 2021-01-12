@@ -4,6 +4,10 @@ import logging
 import mock
 import pytest
 import requests
+from _pytest.monkeypatch import MonkeyPatch
+
+message_queue_patch = MonkeyPatch()
+message_queue_patch.setattr("telegram_handler.TelegramBotQueue.MQBot.__init__", lambda *_, **kwargs: None)
 
 import telegram_handler.handlers
 
@@ -52,21 +56,22 @@ def handler():
 def test_emit(handler):
     record = logging.makeLogRecord({'msg': 'hello'})
 
-    with mock.patch('requests.post') as patch:
+    with mock.patch('telegram_handler.TelegramBotQueue.MQBot.send_message') as patch:
         handler.emit(record)
 
     assert patch.called
     assert patch.call_count == 1
-    assert patch.call_args[1]['json']['chat_id'] == 'bar'
-    assert 'hello' in patch.call_args[1]['json']['text']
-    assert patch.call_args[1]['json']['parse_mode'] == 'HTML'
+    assert patch.call_args[1]['chat_id'] == 'bar'
+    assert 'hello' in patch.call_args[1]['text']
+    assert patch.call_args[1]['parse_mode'] == 'HTML'
+
 
 def test_emit_big_message(handler):
     message = '*' * telegram_handler.handlers.MAX_MESSAGE_LEN
 
     record = logging.makeLogRecord({'msg': message})
 
-    with mock.patch('requests.post') as patch:
+    with mock.patch('telegram_handler.TelegramBotQueue.MQBot.send_document') as patch:
         handler.emit(record)
 
     assert patch.called
@@ -76,25 +81,25 @@ def test_emit_big_message(handler):
 def test_emit_http_exception(handler):
     record = logging.makeLogRecord({'msg': 'hello'})
 
-    with mock.patch('requests.post') as patch:
-        response = requests.Response()
-        response.status_code = 500
-        response._content = 'Server error'.encode()
-        patch.return_value = response
+    with mock.patch('telegram_handler.TelegramBotQueue.MQBot.send_message') as patch:
+        # response = requests.Response()
+        # response.status_code = 500
+        # response._content = 'Server error'.encode()
+        patch.return_value = None
         handler.emit(record)
 
-    assert telegram_handler.handlers.logger.handlers[0].messages['error']
-    assert telegram_handler.handlers.logger.handlers[0].messages['debug']
+    assert telegram_handler.handlers.logger.handlers[0].messages['warning']
+    # assert telegram_handler.handlers.logger.handlers[0].messages['debug']
 
 
 def test_emit_telegram_error(handler):
     record = logging.makeLogRecord({'msg': 'hello'})
 
-    with mock.patch('requests.post') as patch:
-        response = requests.Response()
-        response.status_code = 200
-        response._content = json.dumps({'ok': False}).encode()
-        patch.return_value = response
+    with mock.patch('telegram_handler.TelegramBotQueue.MQBot.send_message') as patch:
+        #response = requests.Response()
+        #response.status_code = 200
+        #response._content = json.dumps({'ok': False}).encode()
+        patch.return_value = None
         handler.emit(record)
 
     assert telegram_handler.handlers.logger.handlers[0].messages['warning']
@@ -158,6 +163,7 @@ def test_handler_init_without_chat():
 
         assert handler.level == logging.NOTSET
 
+
 def test_handler_respects_proxy():
     proxies = {
         'http': 'http_proxy_sample',
@@ -165,20 +171,21 @@ def test_handler_respects_proxy():
     }
 
     handler = telegram_handler.handlers.TelegramHandler('foo', 'bar', level=logging.INFO, proxies=proxies)
-    
+
     record = logging.makeLogRecord({'msg': 'hello'})
 
-    with mock.patch('requests.post') as patch:
+    with mock.patch('telegram_handler.TelegramBotQueue.MQBot.send_message') as patch:
         handler.emit(record)
 
-    assert patch.call_args[1]['proxies'] == proxies
+    assert patch.call_args[1]['api_kwargs']['proxies'] == proxies
+
 
 def test_custom_formatter(handler):
     handler.setFormatter(logging.Formatter())
 
     record = logging.makeLogRecord({'msg': 'hello'})
 
-    with mock.patch('requests.post') as patch:
+    with mock.patch('telegram_handler.TelegramBotQueue.MQBot.send_message') as patch:
         handler.emit(record)
 
-    assert 'parse_mode' not in patch.call_args[1]['json']
+    assert 'parse_mode' not in patch.call_args[1]

@@ -26,9 +26,11 @@ class MarkdownFormatter(TelegramFormatter):
 
 
 class EMOJI:
-    WHITE_CIRCLE = '\xE2\x9A\xAA'
-    BLUE_CIRCLE = '\xF0\x9F\x94\xB5'
-    RED_CIRCLE = '\xF0\x9F\x94\xB4'
+    WHITE_CIRCLE = '\U000026AA'
+    BLUE_CIRCLE = '\U0001F535'
+    YELLOW_CIRCLE = '\U0001f7e1'
+    RED_CIRCLE = '\U0001F534'
+    BLACK_CIRCLE = '\u26AB'
 
 
 class HtmlFormatter(TelegramFormatter):
@@ -52,13 +54,19 @@ class HtmlFormatter(TelegramFormatter):
             record.name = escape_html(str(record.name))
         if record.msg:
             record.msg = escape_html(record.getMessage())
+        if record.message:
+            record.message = escape_html(record.message)
         if self.use_emoji:
             if record.levelno == logging.DEBUG:
                 record.levelname += ' ' + EMOJI.WHITE_CIRCLE
             elif record.levelno == logging.INFO:
                 record.levelname += ' ' + EMOJI.BLUE_CIRCLE
-            else:
+            elif record.levelno == logging.WARNING:
+                record.levelname += ' ' + EMOJI.YELLOW_CIRCLE
+            elif record.levelno == logging.ERROR:
                 record.levelname += ' ' + EMOJI.RED_CIRCLE
+            else:
+                record.levelname += ' ' + EMOJI.BLACK_CIRCLE
 
         if hasattr(self, '_style'):
             return self._style.format(record)
