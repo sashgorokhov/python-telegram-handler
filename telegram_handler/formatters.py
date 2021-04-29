@@ -30,6 +30,7 @@ class EMOJI:
     BLUE_CIRCLE = '\U0001F535'
     RED_CIRCLE = '\U0001F534'
 
+
 class HtmlFormatter(TelegramFormatter):
     """HTML formatter for telegram."""
     fmt = '<code>%(asctime)s</code> <b>%(levelname)s</b>\nFrom %(name)s:%(funcName)s\n%(message)s'
