@@ -26,9 +26,9 @@ class MarkdownFormatter(TelegramFormatter):
 
 
 class EMOJI:
-    WHITE_CIRCLE = '\xE2\x9A\xAA'
-    BLUE_CIRCLE = '\xF0\x9F\x94\xB5'
-    RED_CIRCLE = '\xF0\x9F\x94\xB4'
+    WHITE_CIRCLE = '\U000026AA'
+    BLUE_CIRCLE = '\U0001F535'
+    RED_CIRCLE = '\U0001F534'
 
 
 class HtmlFormatter(TelegramFormatter):
