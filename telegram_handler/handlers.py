@@ -19,9 +19,10 @@ class TelegramHandler(logging.Handler):
     API_ENDPOINT = 'https://api.telegram.org'
     last_response = None
 
-    def __init__(self, token, chat_id=None, level=logging.NOTSET, timeout=2, disable_notification=False,
+    def __init__(self, token, chat_id=None, username=None, level=logging.NOTSET, timeout=2, disable_notification=False,
                  disable_web_page_preview=False, proxies=None):
         self.token = token
+        self.username = username
         self.disable_web_page_preview = disable_web_page_preview
         self.disable_notification = disable_notification
         self.timeout = timeout
@@ -82,6 +83,8 @@ class TelegramHandler(logging.Handler):
 
     def emit(self, record):
         text = self.format(record)
+        if self.username is not None:
+            text = '<b>{}</b>: {}'.format(self.username, text)
 
         data = {
             'chat_id': self.chat_id,
