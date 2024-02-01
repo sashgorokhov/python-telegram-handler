@@ -109,13 +109,21 @@ class TelegramHandler(logging.Handler):
         if self.proxies is not None:
             kwargs.setdefault('proxies', self.proxies)
 
-        if len(text) < MAX_MESSAGE_LEN:
-            response = self.bot.send_message(text=text, api_kwargs=kwargs, **data)
-        else:
-            del data['disable_web_page_preview']
-            response = self.bot.send_document(caption=text[:1000], api_kwargs=kwargs, document=BytesIO(text.encode()),
-                                              filename="traceback.txt",
-                                              **data)
 
-        if not response:
-            logger.warning('Telegram responded with ok=false status! {}'.format(response))
+
+        try:
+            if len(text) < MAX_MESSAGE_LEN:
+                response = self.bot.send_message(text=text, api_kwargs=kwargs, **data)
+            else:
+                del data['disable_web_page_preview']
+                response = self.bot.send_document(caption=text[:1000], api_kwargs=kwargs, document=BytesIO(text.encode()),
+                                                  filename="traceback.txt",
+                                                  **data)
+            if not response:
+                logger.warning(
+                    'Telegram responded with ok=false status! {}'.format(
+                        response))
+        except Exception as e:
+            logger.exception("Error while sending message to telegram, "
+                             f"{str(e)}")
+            logger.debug(str(kwargs))
