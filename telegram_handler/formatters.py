@@ -8,7 +8,8 @@ __all__ = ['TelegramFormatter', 'MarkdownFormatter', 'HtmlFormatter']
 class TelegramFormatter(logging.Formatter):
     """Base formatter class suitable for use with `TelegramHandler`"""
 
-    fmt = "%(asctime)s %(levelname)s\n[%(name)s:%(funcName)s]\n%(message)s"
+    fmt = ("%(asctime)s %(levelname)s\n[%(host)s:%(name)s:%(funcName)s]\n%("
+           "message)s")
     parse_mode = None
 
     def __init__(self, fmt=None, *args, **kwargs):
@@ -17,7 +18,8 @@ class TelegramFormatter(logging.Formatter):
 
 class MarkdownFormatter(TelegramFormatter):
     """Markdown formatter for telegram."""
-    fmt = '`%(asctime)s` *%(levelname)s*\n[%(name)s:%(funcName)s]\n%(message)s'
+    fmt = ('`%(asctime)s` *%(levelname)s*\n[%(host)s:%(name)s:%('
+           'funcName)s]\n%(message)s')
     parse_mode = 'Markdown'
 
     def formatException(self, *args, **kwargs):
@@ -35,7 +37,8 @@ class EMOJI:
 
 class HtmlFormatter(TelegramFormatter):
     """HTML formatter for telegram."""
-    fmt = '<code>%(asctime)s</code> <b>%(levelname)s</b>\nFrom %(name)s:%(funcName)s\n%(message)s'
+    fmt = ('<code>%(asctime)s</code> <b>%(levelname)s</b>\nFrom %(host)s:%('
+           'name)s:%(funcName)s\n%(message)s')
     parse_mode = 'HTML'
 
     def __init__(self, *args, **kwargs):
